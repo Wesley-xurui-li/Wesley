@@ -1,0 +1,170 @@
+Last login: Tue Sep 23 19:53:47 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+MacBookPro:~ wesley$ mkdir -p ~/virusbreakend-nix
+MacBookPro:~ wesley$ cd ~/virusbreakend-nix
+MacBookPro:virusbreakend-nix wesley$ cat > flake.nix <<'NIX'
+> {
+>   description = "BioNix: Native packaging for GRIDSS & VirusBreakend";
+> 
+>   inputs = {
+>     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+>     flake-utils.url = "github:numtide/flake-utils";
+>   };
+> 
+>   outputs = { self, nixpkgs, flake-utils }:
+>     flake-utils.lib.eachDefaultSystem (system:
+>     let
+>       pkgs = import nixpkgs { inherit system; };
+>  gridssVersion = "2.13.2";
+>  gridssSrc = pkgs.fetchurl {
+>         url = "https://github.com/PapenfussLab/gridss/releases/download/v${gridssVersion}/gridss-${gridssVersion}.zip";
+>         sha256 = pkgs.lib.fakeSha256;
+>       };
+> 
+>       gridss = pkgs.stdenv.mkDerivation {
+>         pname = "gridss";
+>         version = gridssVersion;
+> 
+>         src = gridssSrc;
+> 
+>         nativeBuildInputs = [ pkgs.unzip pkgs.makeWrapper ];
+>         buildInputs = [
+>           pkgs.openjdk17_headless
+>           pkgs.bwa
+>           pkgs.samtools
+>         ];
+>  installPhase = ''
+>           runHook preInstall
+>           mkdir -p $out/share/gridss $out/bin
+>           unzip -qq $src -d $out/share/gridss
+> 
+>           for s in gridss.sh virusbreakend.sh; do
+>             if [ -f "$out/share/gridss/$s" ]; then
+>               install -m 0755 "$out/share/gridss/$s" "$out/bin/${s%.sh}"
+>               wrapProgram "$out/bin/${s%.sh}" \
+>                 --set JAVA_HOME ${pkgs.openjdk17_headless} \
+>                 --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.bwa pkgs.samtools ]}
+>             fi
+>           done
+> 
+>           runHook postInstall
+>         '';
+> 
+>         meta = with pkgs.lib; {
+>           description = "GRIDSS and VirusBreakend (native Nix package)";
+>           homepage = "https://github.com/PapenfussLab/gridss";
+>           license = licenses.gpl3Plus;
+>           platforms = platforms.unix;
+>         };
+>       };
+>     in
+>     {
+>       packages.default = gridss;
+> 
+>       apps.default = {
+>         type = "app";
+>         program = "${gridss}/bin/virusbreakend";
+>       };
+>       apps.virusbreakend = {
+>         type = "app";
+>         program = "${gridss}/bin/virusbreakend";
+>       };
+>       apps.gridss = {
+>         type = "app";
+>         program = "${gridss}/bin/gridss";
+>       };
+>     });
+> }
+> NIX
+MacBookPro:virusbreakend-nix wesley$ nix build
+warning: Git tree '/Users/wesley' has uncommitted changes
+error: Path 'virusbreakend-nix/flake.nix' in the repository "/Users/wesley" is not tracked by Git.
+
+       To make it visible to Nix, run:
+
+       git -C "/Users/wesley" add "virusbreakend-nix/flake.nix"
+MacBookPro:virusbreakend-nix wesley$ cd ~/virusbreakend-nix
+MacBookPro:virusbreakend-nix wesley$ git init
+Initialized empty Git repository in /Users/wesley/virusbreakend-nix/.git/
+MacBookPro:virusbreakend-nix wesley$ git add flake.nix
+MacBookPro:virusbreakend-nix wesley$ git commit -m "init virusbreakend flake"
+[main (root-commit) 3e3ae9a] init virusbreakend flake
+ 1 file changed, 72 insertions(+)
+ create mode 100644 flake.nix
+MacBookPro:virusbreakend-nix wesley$ nix build
+error: syntax error, unexpected invalid token, expecting '}'
+       at /Users/wesley/virusbreakend-nix/flake.nix:38:67:
+           37|             if [ -f "$out/share/gridss/$s" ]; then
+           38|               install -m 0755 "$out/share/gridss/$s" "$out/bin/${s%.sh}"
+             |                                                                   ^
+           39|               wrapProgram "$out/bin/${s%.sh}" \
+MacBookPro:virusbreakend-nix wesley$ sed -i '' 's|"$out/bin/${s%.sh}"|"$out/bin/\\${s%.sh}"|g' flake.nix
+MacBookPro:virusbreakend-nix wesley$ Nix
+error: no subcommand specified
+Try 'Nix --help' for more information.
+MacBookPro:virusbreakend-nix wesley$ nix build
+warning: Git tree '/Users/wesley/virusbreakend-nix' has uncommitted changes
+error: syntax error, unexpected invalid token, expecting '}'
+       at /Users/wesley/virusbreakend-nix/flake.nix:38:68:
+           37|             if [ -f "$out/share/gridss/$s" ]; then
+           38|               install -m 0755 "$out/share/gridss/$s" "$out/bin/\${s%.sh}"
+             |                                                                    ^
+           39|               wrapProgram "$out/bin/\${s%.sh}" \
+MacBookPro:virusbreakend-nix wesley$ sed -i '' 's|\$out/bin/\${s%.sh}|\$out/bin/$(basename "$s" .sh)|' flake.nix
+MacBookPro:virusbreakend-nix wesley$ sed -i '' 's|\$out/bin/\\\${s%.sh}|\$out/bin/$(basename "$s" .sh)|' flake.nix
+MacBookPro:virusbreakend-nix wesley$ sed -i '' 's|"\$out/bin/\${s%.sh}"|"\$out/bin/$(basename "$s" .sh)"|' flake.nix
+MacBookPro:virusbreakend-nix wesley$ sed -i '' 's|"\$out/bin/\\\${s%.sh}"|"\$out/bin/$(basename "$s" .sh)"|' flake.nixnix build
+sed: flake.nixnix: No such file or directory
+MacBookPro:virusbreakend-nix wesley$ 's|"\$out/bin/\${s%.sh}"|"\$out/bin/$(basename "$s" .sh)"|' flake.nix
+-bash: s|"\$out/bin/\${s%.sh}"|"\$out/bin/$(basename "$s" .sh)"|: No such file or directory
+MacBookPro:virusbreakend-nix wesley$ sed -i '' 's|"\$out/bin/\\\${s%.sh}"|"\$out/bin/$(basename "$s" .sh)"|' flake.nix
+MacBookPro:virusbreakend-nix wesley$ nix build
+warning: Git tree '/Users/wesley/virusbreakend-nix' has uncommitted changes
+warning: creating lock file "/Users/wesley/virusbreakend-nix/flake.lock": 
+• Added input 'flake-utils':
+    'github:numtide/flake-utils/11707dc2f618dd54ca8739b309ec4fc024de578b?narHash=sha256-l0KFg5HjrsfsO/JpG%2Br7fRrqm12kzFHyUHqHCVpMMbI%3D' (2024-11-13)
+• Added input 'flake-utils/systems':
+    'github:nix-systems/default/da67096a3b9bf56a91d16901293e51ba5b49a27e?narHash=sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768%3D' (2023-04-09)
+• Added input 'nixpkgs':
+    'github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798?narHash=sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL/2HaJxGjryLWzX8%3D' (2024-12-30)
+error: Cannot build '/nix/store/q3n1ikkh48xwfp70qq2l44prjk9xgrmr-gridss-2.13.2.zip.drv'.
+       Reason: builder failed with exit code 1.
+       Output paths:
+         /nix/store/ndwkmxk1nm5911zn1wsy3hjr8f8y8735-gridss-2.13.2.zip
+       Last 7 log lines:
+       >
+       > trying https://github.com/PapenfussLab/gridss/releases/download/v2.13.2/gridss-2.13.2.zip
+       >   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+       >                                  Dload  Upload   Total   Spent    Left  Speed
+       >   0     9    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+       > curl: (56) The requested URL returned error: 404
+       > error: cannot download gridss-2.13.2.zip from any mirror
+       For full logs, run:
+         nix log /nix/store/q3n1ikkh48xwfp70qq2l44prjk9xgrmr-gridss-2.13.2.zip.drv
+error: Cannot build '/nix/store/hwv1qiz1wrcpszm5fhm3cjng14y2slr7-gridss-2.13.2.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/4q43vrrh581v9whx1zgph0qgp5yx9z56-gridss-2.13.2
+MacBookPro:virusbreakend-nix wesley$ gridssVersion = "2.13.0";
+-bash: gridssVersion: command not found
+MacBookPro:virusbreakend-nix wesley$ gridssSrc = pkgs.fetchurl {
+-bash: gridssSrc: command not found
+MacBookPro:virusbreakend-nix wesley$   url = "https://github.com/PapenfussLab/gridss/releases/download/v${gridssVersion}/gridss-${gridssVersion}.zip";
+-bash: url: command not found
+MacBookPro:virusbreakend-nix wesley$   sha256 = pkgs.lib.fakeSha256;};
+-bash: syntax error near unexpected token `}'
+MacBookPro:virusbreakend-nix wesley$ gridssVersion = "2.13.0";
+-bash: gridssVersion: command not found
+MacBookPro:virusbreakend-nix wesley$ gridssSrc = pkgs.fetchurl {
+-bash: gridssSrc: command not found
+MacBookPro:virusbreakend-nix wesley$   url = "https://github.com/PapenfussLab/gridss/releases/download/v${gridssVersion}/gridss-${gridssVersion}.zip";
+-bash: url: command not found
+MacBookPro:virusbreakend-nix wesley$   sha256 = pkgs.lib.fakeSha256;
+sha256: =: No such file or directory
+sha256: pkgs.lib.fakeSha256: No such file or directory
+MacBookPro:virusbreakend-nix wesley$ };nano flake.nix
+-bash: syntax error near unexpected token `}'
+MacBookPro:virusbreakend-nix wesley$ 

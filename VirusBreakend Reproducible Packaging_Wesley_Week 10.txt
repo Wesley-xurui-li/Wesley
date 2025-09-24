@@ -1,0 +1,142 @@
+Last login: Tue Sep 23 21:10:45 on ttys001
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+MacBookPro:~ wesley$ cd ~
+MacBookPro:~ wesley$ mkdir -p virusbreakend-nix
+MacBookPro:~ wesley$ cd virusbreakend-nix
+MacBookPro:virusbreakend-nix wesley$ cat > flake.nix <<'EOF'
+> {
+>   description = "BioNix: GRIDSS/VirusBreakend via Docker (official reproducible workflow)";
+> 
+>   inputs = {
+>     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+>     flake-utils.url = "github:numtide/flake-utils";
+>   };
+> 
+>   outputs = { self, nixpkgs, flake-utils }:
+>     flake-utils.lib.eachDefaultSystem (system:
+>     let
+>       pkgs = import nixpkgs { inherit system; };
+>       runner = pkgs.writeShellScriptBin "virusbreakend-docker" ''
+>         set -euo pipefail
+>         if ! command -v docker >/dev/null; then
+>           echo "docker not found. Please install/start Docker." >&2
+>           exit 1
+>         fi
+>         docker run --rm -it \
+>           -v "$PWD:/work" -w /work \
+>           gridss/gridss:latest \
+>           virusbreakend "$@"
+>       '';
+>     in
+>     {
+>       packages.default = runner;
+>       apps.default = { type = "app"; program = "${runner}/bin/virusbreakend-docker"; };
+>       apps.virusbreakend = { type = "app"; program = "${runner}/bin/virusbreakend-docker"; };
+>     });
+> }
+> EOF
+MacBookPro:virusbreakend-nix wesley$ cat > README.md <<'EOF'
+> # VirusBreakend (GRIDSS) — Docker-based Nix workflow
+> 
+> This Nix flake wraps the official [gridss/gridss](https://hub.docker.com/r/gridss/gridss) Docker image for reproducible VirusBreakend and GRIDSS workflows.
+> 
+> ## Quick Start
+> 
+> 1. Start Docker Desktop
+> 2. Run VirusBreakend help:
+>     nix run .#virusbreakend -- --help
+> 3. Run with your BAM data:
+>     nix run .#virusbreakend -- -o sample.vcf -r ref.fa normal.bam tumor.bam
+> 
+> ## Notes
+> 
+> - Files must be in your current directory.
+> - Real datasets need ~24GB RAM and ≥4 CPU.
+> - Reference FASTA must be BWA-indexed.
+> EOF
+MacBookPro:virusbreakend-nix wesley$ nix run .#virusbreakend -- --help
+warning: Git tree '/Users/wesley' has uncommitted changes
+error: Path 'virusbreakend-nix/flake.nix' in the repository "/Users/wesley" is not tracked by Git.
+
+       To make it visible to Nix, run:
+
+       git -C "/Users/wesley" add "virusbreakend-nix/flake.nix"
+MacBookPro:virusbreakend-nix wesley$ cd ~/virusbreakend-nix
+MacBookPro:virusbreakend-nix wesley$ git init
+Initialized empty Git repository in /Users/wesley/virusbreakend-nix/.git/
+MacBookPro:virusbreakend-nix wesley$ git add flake.nix README.md
+MacBookPro:virusbreakend-nix wesley$ git commit -m "init reproducible VirusBreakend flake"
+[main (root-commit) 26a3df3] init reproducible VirusBreakend flake
+ 2 files changed, 47 insertions(+)
+ create mode 100644 README.md
+ create mode 100644 flake.nix
+MacBookPro:virusbreakend-nix wesley$ nix run .#virusbreakend -- --help
+warning: creating lock file "/Users/wesley/virusbreakend-nix/flake.lock": 
+• Added input 'flake-utils':
+    'github:numtide/flake-utils/11707dc2f618dd54ca8739b309ec4fc024de578b?narHash=sha256-l0KFg5HjrsfsO/JpG%2Br7fRrqm12kzFHyUHqHCVpMMbI%3D' (2024-11-13)
+• Added input 'flake-utils/systems':
+    'github:nix-systems/default/da67096a3b9bf56a91d16901293e51ba5b49a27e?narHash=sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768%3D' (2023-04-09)
+• Added input 'nixpkgs':
+    'github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798?narHash=sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL/2HaJxGjryLWzX8%3D' (2024-12-30)
+docker not found. Please install/start Docker.
+MacBookPro:virusbreakend-nix wesley$ nix run .#virusbreakend -- --help
+warning: Git tree '/Users/wesley/virusbreakend-nix' has uncommitted changes
+Unable to find image 'gridss/gridss:latest' locally
+latest: Pulling from gridss/gridss
+c50d49cbec7f: Pull complete 
+0cde726839e8: Pull complete 
+c2f16d893633: Pull complete 
+08c01a0ec47e: Pull complete 
+70e1cffd3984: Pull complete 
+0afe01722acd: Pull complete 
+229f1d0e9f52: Pull complete 
+35fabeff8315: Pull complete 
+9902859c78de: Pull complete 
+1621717179f1: Pull complete 
+e5186afe8250: Pull complete 
+d24b2ffeb7e1: Pull complete 
+d59428ef3c3b: Pull complete 
+ea02596475d4: Pull complete 
+814ec8887328: Pull complete 
+9bad9838cff4: Pull complete 
+92065d424daa: Pull complete 
+4f4fb700ef54: Pull complete 
+93bbddf81fb9: Pull complete 
+840266f6f4d5: Pull complete 
+Digest: sha256:14915db77af89b1a3ac0b705362fefb6be12ae0f80b1f8e2221656375a0e0d86
+Status: Downloaded newer image for gridss/gridss:latest
+
+VIRUSBreakend: Viral Integration Recognition Using Single Breakends
+
+Usage: virusbreakend [options] input.bam
+
+    -r/--reference: reference genome of host species.
+    -o/--output: output VCF.
+    -j/--jar: location of GRIDSS jar
+    -t/--threads: number of threads to use. (Default: 8).
+    --viralreferences : file containing names of reference sequences to consider unmapped.
+        Reference genomes such as hs37d5 or the hg38 Broad reference genome include viral
+        sequences in the reference genome. For viral detection, reads aligned to these
+        viral sequences should be consider unmapped so they are considered by VIRUSBreakend.
+        Defaults to chrEBV, and all viral sequence in the VIRUSBreakend database.
+    -w/--workingdir: directory to place intermediate and temporary files. (Default: .).
+    --host: NBCI host filter. Valid values are algae, archaea, bacteria, eukaryotic algae,
+        fungi, human, invertebrates, land plants, plants, protozoa, vertebrates (Default: human)
+    --db: path to virusbreakenddb database directory. Use the supplied virusbreakend-build to build.
+    --kraken2args: additional kraken2 arguments
+    --gridssargs: additional GRIDSS arguments
+    --rmargs: additional RepeatMasker arguments (Default: --species human)
+    --minreads: minimum number of viral reads perform integration detection (Default: 50)
+    --minviralcoverage: minimum % of virus with at least one mapped read. (Default: 10)
+    --force: force execution even if input file is missing.
+        The input is shell reinterpreted on each read of the input file.
+        This enables direct streaming of the input. For example, an input of
+        "<(gsutil cat gs://virusbreakend/input.cram)" would directly stream
+        the input from a GCE cloud storage bucket. Note that the quotes are
+        necessary to prevent the interpretation by the shell invoking virusbreakend
+
+/opt/gridss/virusbreakend: line 1: logfile: unbound variable
+MacBookPro:virusbreakend-nix wesley$ 
