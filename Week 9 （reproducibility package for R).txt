@@ -1,0 +1,106 @@
+Last login: Tue Sep 23 18:39:20 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+MacBookPro:~ wesley$ mkdir -p ~/.config/nix
+MacBookPro:~ wesley$ echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
+MacBookPro:~ wesley$ xcode-select --install
+xcode-select: note: Command line tools are already installed. Use "Software Update" in System Settings or the softwareupdate command line interface to install updates
+MacBookPro:~ wesley$ nix --version
+nix (Determinate Nix 3.9.1) 2.30.2
+MacBookPro:~ wesley$ mkdir -p ~/r-qqplot && cd ~/r-qqplot
+MacBookPro:r-qqplot wesley$ cat > flake.nix <<'EOF'
+> {
+>   description = "Minimal reproducible R env for QQ plots";
+> 
+>   inputs = {
+>     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+>     flake-utils.url = "github:numtide/flake-utils";
+>   };
+> 
+>   outputs = { self, nixpkgs, flake-utils, ... }:
+>     flake-utils.lib.eachDefaultSystem (system:
+>       let
+>         pkgs = import nixpkgs { inherit system; };
+>         Rwrapped = pkgs.rWrapper.override {
+>           packages = with pkgs.rPackages; [
+>             ggplot2
+>             qqplotr
+>             car
+>           ];
+>         };
+>       in {
+>         devShells.default = pkgs.mkShell {
+>           name = "r-qqplot";
+>           packages = [ Rwrapped pkgs.git ];
+>           shellHook = ''echo "R env ready. Run: R -q -e 'source(\"qq_demo.R\")'"'';
+>         };
+>       });
+> }
+> EOF
+MacBookPro:r-qqplot wesley$ cat > qq_demo.R <<'EOF'
+> set.seed(1)
+> x <- rnorm(200)
+> png("qq_base.png", width=800, height=600)
+> qqnorm(x); qqline(x, col = "red")
+> dev.off()
+> png("qq_car.png", width=800, height=600)
+> car::qqPlot(x, main = "car::qqPlot - Normal Q-Q")
+> dev.off()
+> library(ggplot2); library(qqplotr)
+> df <- data.frame(x = x)
+> p <- ggplot(df, aes(sample = x)) +
+>   stat_qq_band() + stat_qq_line() + stat_qq_point() +
+>   labs(title = "ggplot2 + qqplotr - Normal Q-Q") +
+>   theme_bw(base_size = 14)
+> ggsave("qq_ggplot.png", plot = p, width = 8, height = 6, dpi = 150)
+> EOF
+MacBookPro:r-qqplot wesley$ nix develop
+error: Path 'r-qqplot/flake.nix' in the repository "/Users/wesley" is not tracked by Git.
+
+       To make it visible to Nix, run:
+
+       git -C "/Users/wesley" add "r-qqplot/flake.nix"
+MacBookPro:r-qqplot wesley$ git -C "/Users/wesley" add "r-qqplot/flake.nix"
+MacBookPro:r-qqplot wesley$ R -q -e 'source("qq_demo.R")'
+> source("qq_demo.R")
+Error in library(qqplotr) : there is no package called ‘qqplotr’
+Calls: source -> withVisible -> eval -> eval -> library
+Execution halted
+MacBookPro:r-qqplot wesley$ cd ~/r-qqplot
+MacBookPro:r-qqplot wesley$ git init
+Initialized empty Git repository in /Users/wesley/r-qqplot/.git/
+MacBookPro:r-qqplot wesley$ git add flake.nix qq_demo.R
+MacBookPro:r-qqplot wesley$ git commit -m "init R QQ flake"
+[main (root-commit) 2e369bd] init R QQ flake
+ 2 files changed, 42 insertions(+)
+ create mode 100644 flake.nix
+ create mode 100644 qq_demo.R
+MacBookPro:r-qqplot wesley$ nix develop
+warning: creating lock file "/Users/wesley/r-qqplot/flake.lock": 
+• Added input 'flake-utils':
+    'github:numtide/flake-utils/11707dc2f618dd54ca8739b309ec4fc024de578b?narHash=sha256-l0KFg5HjrsfsO/JpG%2Br7fRrqm12kzFHyUHqHCVpMMbI%3D' (2024-11-13)
+• Added input 'flake-utils/systems':
+    'github:nix-systems/default/da67096a3b9bf56a91d16901293e51ba5b49a27e?narHash=sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768%3D' (2023-04-09)
+• Added input 'nixpkgs':
+    'github:NixOS/nixpkgs/b134951a4c9f3c995fd7be05f3243f8ecd65d798?narHash=sha256-OnSAY7XDSx7CtDoqNh8jwVwh4xNL/2HaJxGjryLWzX8%3D' (2024-12-30)
+R env ready. Run: R -q -e 'source("qq_demo.R")'
+(nix:r-qqplot-env) MacBookPro:r-qqplot wesley$ R -q -e 'source("qq_demo.R")'
+> source("qq_demo.R")
+
+Attaching package: ‘qqplotr’
+
+The following objects are masked from ‘package:ggplot2’:
+
+    stat_qq_line, StatQqLine
+
+> 
+> 
+(nix:r-qqplot-env) MacBookPro:r-qqplot wesley$ open qq_base.png qq_car.png qq_ggplot.png
+(nix:r-qqplot-env) MacBookPro:r-qqplot wesley$ git add flake.lock
+git commit -m "lock inputs for reproducibility"
+[main b022312] lock inputs for reproducibility
+ 1 file changed, 61 insertions(+)
+ create mode 100644 flake.lock
+(nix:r-qqplot-env) MacBookPro:r-qqplot wesley$ 

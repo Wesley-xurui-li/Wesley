@@ -1,0 +1,576 @@
+Last login: Tue Sep  2 21:05:12 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+MacBookPro:~ wesley$ { pkgs ? import <nixpkgs> {} }:
+> 
+> pkgs.stdenv.mkDerivation {
+>   pname = "samtools-wrapper";
+>   version = pkgs.samtools.version;
+> buildInputs = [ pkgs.samtools ];
+> installPhase = ''
+>     mkdir -p $out/bin
+>     ln -s ${pkgs.samtools}/bin/* $out/bin/
+>   '';
+> }
+-bash: nixpkgs: No such file or directory
+-bash: pkgs.stdenv.mkDerivation: command not found
+-bash: pname: command not found
+-bash: version: command not found
+-bash: buildInputs: command not found
+-bash: installPhase: command not found
+-bash: ${pkgs.samtools}/bin/*: bad substitution
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+error: path '/Users/wesley/samtools.nix' does not exist
+MacBookPro:~ wesley$ nano samtools.nix
+MacBookPro:~ wesley$ nano samtools.nix
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+unpacking 'https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz' into the Git cache...
+this derivation will be built:
+  /nix/store/aa6398h7k3ihk9f31lr8zhydyhcgj9fb-samtools-wrapper-1.19.2.drv
+these 62 paths will be fetched (149.19 MiB download, 953.10 MiB unpacked):
+  /nix/store/f9wk3hmrxc1wyh6vvsncbgg4f7wcsddg-Libsystem-1238.60.2
+  /nix/store/jyplylm4rx3zfpw0nxvji5d991ax5gci-adv_cmds-119-locale
+  /nix/store/9pzls8barp493anxxik2ngf8q9jag2sx-apple-framework-CoreFoundation
+  /nix/store/7ia0cb68r08jc0zv437a7k9jsm42gcyr-bash-5.2p32
+  /nix/store/lfb99d5radvax528l6aadyd5a8fa7lpm-binutils-2.41
+  /nix/store/dqwq90k5arnpsj030avqjlp8ikqyyjbw-binutils-2.41-lib
+  /nix/store/nkgcv5yj1f2ng5025gjaqc7cf8nivf2g-brotli-1.1.0-lib
+  /nix/store/n9cp4mmgya6pcgldpk58bzhwdrwq8618-bzip2-1.0.8
+  /nix/store/f3q95y31k4smw1qwcbvf0mpm4n9la7yn-bzip2-1.0.8-bin
+  /nix/store/268cqlnw6ww917p8alrls1wjxydqywvq-cctools-binutils-darwin-16.0.6-973.0.1
+  /nix/store/rgiirnhx8b9ign0ny2052jgaay6s1b62-cctools-binutils-darwin-wrapper-16.0.6-973.0.1
+  /nix/store/jc5qxbb1hm5cfyrra34j32hhaw15n040-cctools-llvm-16.0.6-973.0.1
+  /nix/store/q599hm4gzlrc4043667vzhanhbl10gr3-cctools-port-973.0.1
+  /nix/store/jai0wjrjly8l0z8vc72k38rldr684kvg-clang-16.0.6
+  /nix/store/wqbc85mi1f3njqnfb03s28dzxi2ldfz2-clang-16.0.6-lib
+  /nix/store/cd7xf7gc37cvlvffa1124pvy7bxpnvww-clang-wrapper-16.0.6
+  /nix/store/ahzc3gy5pja4s1mbbgnzvwz63r79kcsg-compiler-rt-libc-16.0.6
+  /nix/store/frihdc7crah5h9506d9jf2qdnyknif4i-compiler-rt-libc-16.0.6-dev
+  /nix/store/f40kqz7zkz4xgzx3ai2nmm9rlw4bffl1-coreutils-9.5
+  /nix/store/ivgc1b3fx15hvwfrzygka0va2dhr7pym-curl-8.7.1
+  /nix/store/nb9c4krs23rdiyjyd0k2cs96ghwc4c7p-diffutils-3.10
+  /nix/store/kfjmpw6x4zqvfagq7883b1zcrgci77zg-ed-1.20.2
+  /nix/store/wqan875g7pww1gpray11z816z0cdrawy-expand-response-params
+  /nix/store/qw72mgrw5bfs96y1n5rbxp5ahfkz6rjb-file-5.45
+  /nix/store/ig9bnnl3bsrd9f3fybasf0hfhazfmidj-findutils-4.9.0
+  /nix/store/qpgn591wvsv242q36lh78k6d9l4g42c1-gawk-5.2.2
+  /nix/store/6kfv67lxpagbi4vmn4mhvbg777yxl9hb-gettext-0.21.1
+  /nix/store/3m26n63708n577wj6k94kvqa6bnjhqb7-gmp-with-cxx-6.3.0
+  /nix/store/jc2fnn4ms15w41gfyrwf96lnlcbb0hs8-gnugrep-3.11
+  /nix/store/18317yygjxf8mgpcmdzniymwingm0s3z-gnumake-4.4.1
+  /nix/store/ms1j8gvr6lbniv4s6xc6dgkx47cirsgm-gnused-4.9
+  /nix/store/i3f22506jr66pxsqijammg5h1b574yxa-gnutar-1.35
+  /nix/store/vmyh2f5gnjxy32g3jrd2f2wysmr000nz-gzip-1.13
+  /nix/store/cbbrkpcdkcwcbq6dz3qz99ziv1sckczs-htslib-1.19.1
+  /nix/store/439jc4b81cwa7p238f4a1znwfr8bw9xd-libcxx-16.0.6
+  /nix/store/yfdyzsf3d77vfaczwrjyrs9bapf9ph54-libcxx-16.0.6-dev
+  /nix/store/rcb6561jzfakvs9ba54jkrckrynm1xll-libffi-3.4.6
+  /nix/store/rwvj1ngkgl1lzlh9myr6wdhx718l8y7b-libiconv-99
+  /nix/store/ais7ran3bggx4mvd5ybi8lznnmmq06yn-libidn2-2.3.7
+  /nix/store/7zv2dscv6xmf6clj3pjvl0072z8swq2g-libkrb5-1.21.3
+  /nix/store/npx1g1xjvm88a4n3a0bxrc1diixcc15k-libpsl-0.21.5
+  /nix/store/7lxj1drwfinjcwgg5cxqaxdhc4bpn4vb-libssh2-1.11.0
+  /nix/store/m1iyhvab6da4lsq5w3h1vk314vhm98qq-libtapi-1100.0.11
+  /nix/store/jwysb5qqbib3fp3sv0q4p4xri04vq55s-libunistring-1.1
+  /nix/store/r6c398pz6x4684f34n0wf6miczf497ga-libxml2-2.12.9
+  /nix/store/ky7wqgvxv4gjyg3cldp41qvwqa11z6qv-lld-16.0.6
+  /nix/store/al33i5m53h04h0wa6r6clrmq6w2ran66-llvm-16.0.6
+  /nix/store/fb7y8z2wv2pcr55qc4kr5bd0xv31isws-llvm-16.0.6-lib
+  /nix/store/4lcwxmq1i20jhsmxbldzadaipq06n9z7-llvm-binutils-16.0.6
+  /nix/store/wlz49kla8jy45a8nx2r51gm1fdm34qcg-ncurses-6.4
+  /nix/store/aih0i8pwh61kv0g0d0rwyy1vvbmyg8j2-nghttp2-1.61.0-lib
+  /nix/store/mj0c9cjks4czfzh6grblrk2yjl04snqj-openssl-3.0.14
+  /nix/store/mf5g79x7p0l8y5w0b90phh6kxji3nzpl-patch-2.7.6
+  /nix/store/59av6kaxhqlvy10gbd9vqbsmrn93z98k-pcre2-10.43
+  /nix/store/bjcrpsg64477lq5kkn51c86dj6b20fva-publicsuffix-list-0-unstable-2024-01-07
+  /nix/store/b50zlk7l92pb5m9iny63z18v3fpljhsq-samtools-1.19.2
+  /nix/store/qswhbp0ykh18rl41ha7kx4q75vl9r22y-sdkroot-10.12
+  /nix/store/a76lsxd0dixidxj1z5qyv3yx9xfnqz3h-stdenv-darwin
+  /nix/store/kg7bgcikfw8yp0kiw0bma00dyasi75vd-xz-5.4.7
+  /nix/store/vjcl44q974wcdskxzipma4m2ghnxjc8c-xz-5.4.7-bin
+  /nix/store/cf3jj03a76gz9crnb5r7ywlgljkk25sa-zlib-1.3.1
+  /nix/store/6v8smbykqj5r51p1d9gpjapvqnv9f2d6-zstd-1.5.6
+copying path '/nix/store/7ia0cb68r08jc0zv437a7k9jsm42gcyr-bash-5.2p32' from 'https://cache.nixos.org'...
+copying path '/nix/store/jyplylm4rx3zfpw0nxvji5d991ax5gci-adv_cmds-119-locale' from 'https://cache.nixos.org'...
+copying path '/nix/store/9pzls8barp493anxxik2ngf8q9jag2sx-apple-framework-CoreFoundation' from 'https://cache.nixos.org'...
+copying path '/nix/store/18317yygjxf8mgpcmdzniymwingm0s3z-gnumake-4.4.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/ms1j8gvr6lbniv4s6xc6dgkx47cirsgm-gnused-4.9' from 'https://cache.nixos.org'...
+copying path '/nix/store/wlz49kla8jy45a8nx2r51gm1fdm34qcg-ncurses-6.4' from 'https://cache.nixos.org'...
+copying path '/nix/store/qswhbp0ykh18rl41ha7kx4q75vl9r22y-sdkroot-10.12' from 'https://cache.nixos.org'...
+copying path '/nix/store/cf3jj03a76gz9crnb5r7ywlgljkk25sa-zlib-1.3.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/f9wk3hmrxc1wyh6vvsncbgg4f7wcsddg-Libsystem-1238.60.2' from 'https://cache.nixos.org'...
+copying path '/nix/store/n9cp4mmgya6pcgldpk58bzhwdrwq8618-bzip2-1.0.8' from 'https://cache.nixos.org'...
+copying path '/nix/store/wqan875g7pww1gpray11z816z0cdrawy-expand-response-params' from 'https://cache.nixos.org'...
+copying path '/nix/store/439jc4b81cwa7p238f4a1znwfr8bw9xd-libcxx-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/rwvj1ngkgl1lzlh9myr6wdhx718l8y7b-libiconv-99' from 'https://cache.nixos.org'...
+copying path '/nix/store/59av6kaxhqlvy10gbd9vqbsmrn93z98k-pcre2-10.43' from 'https://cache.nixos.org'...
+copying path '/nix/store/kg7bgcikfw8yp0kiw0bma00dyasi75vd-xz-5.4.7' from 'https://cache.nixos.org'...
+copying path '/nix/store/nkgcv5yj1f2ng5025gjaqc7cf8nivf2g-brotli-1.1.0-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/rcb6561jzfakvs9ba54jkrckrynm1xll-libffi-3.4.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/aih0i8pwh61kv0g0d0rwyy1vvbmyg8j2-nghttp2-1.61.0-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/mj0c9cjks4czfzh6grblrk2yjl04snqj-openssl-3.0.14' from 'https://cache.nixos.org'...
+copying path '/nix/store/bjcrpsg64477lq5kkn51c86dj6b20fva-publicsuffix-list-0-unstable-2024-01-07' from 'https://cache.nixos.org'...
+copying path '/nix/store/f3q95y31k4smw1qwcbvf0mpm4n9la7yn-bzip2-1.0.8-bin' from 'https://cache.nixos.org'...
+copying path '/nix/store/qw72mgrw5bfs96y1n5rbxp5ahfkz6rjb-file-5.45' from 'https://cache.nixos.org'...
+copying path '/nix/store/vjcl44q974wcdskxzipma4m2ghnxjc8c-xz-5.4.7-bin' from 'https://cache.nixos.org'...
+copying path '/nix/store/kfjmpw6x4zqvfagq7883b1zcrgci77zg-ed-1.20.2' from 'https://cache.nixos.org'...
+copying path '/nix/store/vmyh2f5gnjxy32g3jrd2f2wysmr000nz-gzip-1.13' from 'https://cache.nixos.org'...
+copying path '/nix/store/mf5g79x7p0l8y5w0b90phh6kxji3nzpl-patch-2.7.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/ahzc3gy5pja4s1mbbgnzvwz63r79kcsg-compiler-rt-libc-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/3m26n63708n577wj6k94kvqa6bnjhqb7-gmp-with-cxx-6.3.0' from 'https://cache.nixos.org'...
+copying path '/nix/store/yfdyzsf3d77vfaczwrjyrs9bapf9ph54-libcxx-16.0.6-dev' from 'https://cache.nixos.org'...
+copying path '/nix/store/m1iyhvab6da4lsq5w3h1vk314vhm98qq-libtapi-1100.0.11' from 'https://cache.nixos.org'...
+copying path '/nix/store/6v8smbykqj5r51p1d9gpjapvqnv9f2d6-zstd-1.5.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/6kfv67lxpagbi4vmn4mhvbg777yxl9hb-gettext-0.21.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/jc2fnn4ms15w41gfyrwf96lnlcbb0hs8-gnugrep-3.11' from 'https://cache.nixos.org'...
+copying path '/nix/store/jwysb5qqbib3fp3sv0q4p4xri04vq55s-libunistring-1.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/r6c398pz6x4684f34n0wf6miczf497ga-libxml2-2.12.9' from 'https://cache.nixos.org'...
+copying path '/nix/store/f40kqz7zkz4xgzx3ai2nmm9rlw4bffl1-coreutils-9.5' from 'https://cache.nixos.org'...
+copying path '/nix/store/frihdc7crah5h9506d9jf2qdnyknif4i-compiler-rt-libc-16.0.6-dev' from 'https://cache.nixos.org'...
+copying path '/nix/store/ais7ran3bggx4mvd5ybi8lznnmmq06yn-libidn2-2.3.7' from 'https://cache.nixos.org'...
+copying path '/nix/store/fb7y8z2wv2pcr55qc4kr5bd0xv31isws-llvm-16.0.6-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/nb9c4krs23rdiyjyd0k2cs96ghwc4c7p-diffutils-3.10' from 'https://cache.nixos.org'...
+copying path '/nix/store/ig9bnnl3bsrd9f3fybasf0hfhazfmidj-findutils-4.9.0' from 'https://cache.nixos.org'...
+copying path '/nix/store/7lxj1drwfinjcwgg5cxqaxdhc4bpn4vb-libssh2-1.11.0' from 'https://cache.nixos.org'...
+copying path '/nix/store/7zv2dscv6xmf6clj3pjvl0072z8swq2g-libkrb5-1.21.3' from 'https://cache.nixos.org'...
+copying path '/nix/store/dqwq90k5arnpsj030avqjlp8ikqyyjbw-binutils-2.41-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/qpgn591wvsv242q36lh78k6d9l4g42c1-gawk-5.2.2' from 'https://cache.nixos.org'...
+copying path '/nix/store/i3f22506jr66pxsqijammg5h1b574yxa-gnutar-1.35' from 'https://cache.nixos.org'...
+copying path '/nix/store/npx1g1xjvm88a4n3a0bxrc1diixcc15k-libpsl-0.21.5' from 'https://cache.nixos.org'...
+copying path '/nix/store/ivgc1b3fx15hvwfrzygka0va2dhr7pym-curl-8.7.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/lfb99d5radvax528l6aadyd5a8fa7lpm-binutils-2.41' from 'https://cache.nixos.org'...
+copying path '/nix/store/cbbrkpcdkcwcbq6dz3qz99ziv1sckczs-htslib-1.19.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/b50zlk7l92pb5m9iny63z18v3fpljhsq-samtools-1.19.2' from 'https://cache.nixos.org'...
+copying path '/nix/store/q599hm4gzlrc4043667vzhanhbl10gr3-cctools-port-973.0.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/wqbc85mi1f3njqnfb03s28dzxi2ldfz2-clang-16.0.6-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/ky7wqgvxv4gjyg3cldp41qvwqa11z6qv-lld-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/al33i5m53h04h0wa6r6clrmq6w2ran66-llvm-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/4lcwxmq1i20jhsmxbldzadaipq06n9z7-llvm-binutils-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/jai0wjrjly8l0z8vc72k38rldr684kvg-clang-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/jc5qxbb1hm5cfyrra34j32hhaw15n040-cctools-llvm-16.0.6-973.0.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/268cqlnw6ww917p8alrls1wjxydqywvq-cctools-binutils-darwin-16.0.6-973.0.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/rgiirnhx8b9ign0ny2052jgaay6s1b62-cctools-binutils-darwin-wrapper-16.0.6-973.0.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/cd7xf7gc37cvlvffa1124pvy7bxpnvww-clang-wrapper-16.0.6' from 'https://cache.nixos.org'...
+copying path '/nix/store/a76lsxd0dixidxj1z5qyv3yx9xfnqz3h-stdenv-darwin' from 'https://cache.nixos.org'...
+building '/nix/store/aa6398h7k3ihk9f31lr8zhydyhcgj9fb-samtools-wrapper-1.19.2.drv'...
+Running phase: unpackPhase
+variable $src or $srcs should point to the source
+error: Cannot build '/nix/store/aa6398h7k3ihk9f31lr8zhydyhcgj9fb-samtools-wrapper-1.19.2.drv'.
+       Reason: builder failed with exit code 1.
+       Output paths:
+         /nix/store/gy9pigw01yw1xdz8jh2nfrxl2zxj79ih-samtools-wrapper-1.19.2
+       Last 2 log lines:
+       > Running phase: unpackPhase
+       > variable $src or $srcs should point to the source
+       For full logs, run:
+         nix log /nix/store/aa6398h7k3ihk9f31lr8zhydyhcgj9fb-samtools-wrapper-1.19.2.drv
+MacBookPro:~ wesley$ { pkgs ? import <nixpkgs> {} }:
+> 
+> pkgs.stdenv.mkDerivation {
+>   pname = "samtools-wrapper";
+>   version = pkgs.samtools.version;
+> 
+>   dontUnpack = true;
+>   dontBuild = true;
+> 
+>   installPhase = ''
+>     mkdir -p $out/bin
+>     ln -s ${pkgs.samtools}/bin/* $out/bin/
+>   '';
+> }
+-bash: nixpkgs: No such file or directory
+-bash: pkgs.stdenv.mkDerivation: command not found
+-bash: pname: command not found
+-bash: version: command not found
+-bash: dontUnpack: command not found
+-bash: dontBuild: command not found
+-bash: installPhase: command not found
+-bash: ${pkgs.samtools}/bin/*: bad substitution
+MacBookPro:~ wesley$ cat > samtools.nix <<'NIX'
+> { pkgs ? import <nixpkgs> {} }:
+> 
+> pkgs.symlinkJoin {
+>   name = "samtools-wrapper-${pkgs.samtools.version}";
+>   paths = [ pkgs.samtools ];
+> }
+> NIX
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+this derivation will be built:
+  /nix/store/3fr7n7p2yym5q22imrfdbjlfmzl5z6y7-samtools-wrapper-1.19.2.drv
+these 2 paths will be fetched (0.02 MiB download, 0.07 MiB unpacked):
+  /nix/store/xrw61rmnwm4g0kjxl5ghn3nldsfw9319-lndir-1.0.5
+  /nix/store/3jwbhlh5j7k891qck5lcw94swb6h4l35-stdenv-darwin
+copying path '/nix/store/xrw61rmnwm4g0kjxl5ghn3nldsfw9319-lndir-1.0.5' from 'https://cache.nixos.org'...
+copying path '/nix/store/3jwbhlh5j7k891qck5lcw94swb6h4l35-stdenv-darwin' from 'https://cache.nixos.org'...
+building '/nix/store/3fr7n7p2yym5q22imrfdbjlfmzl5z6y7-samtools-wrapper-1.19.2.drv'...
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ ./result/bin/samtools --version
+samtools 1.19.2
+Using htslib 1.19.1
+Copyright (C) 2024 Genome Research Ltd.
+
+Samtools compilation details:
+    Features:       build=configure curses=yes 
+    CC:             clang
+    CPPFLAGS:       
+    CFLAGS:         -Wall -g -O2
+    LDFLAGS:        
+    HTSDIR:         
+    LIBS:           
+    CURSES_LIB:     -lncursesw
+
+HTSlib compilation details:
+    Features:       build=configure libcurl=yes S3=yes GCS=yes libdeflate=no lzma=yes bzip2=yes plugins=no htscodecs=1.6.0
+    CC:             clang
+    CPPFLAGS:       
+    CFLAGS:         -Wall -g -O2 -fvisibility=hidden
+    LDFLAGS:        -fvisibility=hidden 
+
+HTSlib URL scheme handlers present:
+    built-in:	 preload, data, file
+    S3 Multipart Upload:	 s3w, s3w+https, s3w+http
+    Amazon S3:	 s3+https, s3+http, s3
+    Google Cloud Storage:	 gs+http, gs+https, gs
+    libcurl:	 imaps, pop3, gophers, http, smb, gopher, sftp, ftps, imap, smtp, smtps, rtsp, scp, ftp, telnet, mqtt, https, smbs, tftp, pop3s, dict
+    crypt4gh-needed:	 crypt4gh
+    mem:	 mem
+MacBookPro:~ wesley$ nix-build samtools.nix
+unpacking 'https://flakehub.com/f/DeterminateSystems/nixpkgs-weekly/%2A.tar.gz' into the Git cache...
+this derivation will be built:
+  /nix/store/n3bz5qf0l7wgpd3mka0nyqi20mcrqrgr-samtools-wrapper-1.22.1.drv
+these 42 paths will be fetched (15.09 MiB download, 114.23 MiB unpacked):
+  /nix/store/qcy443gcdq9a5x7lqi2js0bsdmaks77y-bash-5.3p3
+  /nix/store/82mp1a3nqhhrs6vs31mx98wv9c946qbm-brotli-1.1.0-lib
+  /nix/store/rdfylzd9971jni8l9b262s5wkqw92yc9-bzip2-1.0.8
+  /nix/store/x7sym33nkfldh17vsxdrr1r2059p2xwv-bzip2-1.0.8-bin
+  /nix/store/4419xj3qgn8ir8qigdk5vmbf2gfkfa8x-coreutils-9.7
+  /nix/store/rg8k06q1h2rqr8i93a1pgi9jd4xk7zj2-curl-8.14.1
+  /nix/store/qljc0pg7a1892rkyr067jkgnwklq7msx-diffutils-3.12
+  /nix/store/xffxkrlkr6ckv05ainx6684gxn8nba35-ed-1.21.1
+  /nix/store/y357ras1saj1napr3lcbr8bv2l6284p1-file-5.45
+  /nix/store/dy362qhfnbwpmgl2640ais7c8l96m36j-findutils-4.10.0
+  /nix/store/jk41c12k87g2rjzvp8rd2wqyrjlpb9k8-gawk-5.3.2
+  /nix/store/m29vswnbdc8g1p2yqabk7gckf72jd6rh-gettext-0.25.1
+  /nix/store/0fi2mgxfcgk0bd5w6hzj10gmf4635x0l-gmp-with-cxx-6.3.0
+  /nix/store/js0k9pjw7hs7bcmpqk1z9ic7alng57pp-gnugrep-3.12
+  /nix/store/9skp0bwibcghf7ba5n5q6aqwgb161i9k-gnumake-4.4.1
+  /nix/store/yps6adxhn723bfh2nzjiqj5v8kg6x56p-gnused-4.9
+  /nix/store/zpdnx6afg2l6ax80kh1zardbcvdmx66f-gnutar-1.35
+  /nix/store/vz9r3lpbaxwap29kixvns0md9cqsccm2-gzip-1.14
+  /nix/store/jppm7xp5aq6f2n8swbmny11mqfy70q4y-htslib-1.22
+  /nix/store/flkk0nxbyv9f8j7rrh1lnzvcc1gvkyb0-krb5-1.21.3-lib
+  /nix/store/spcmsl4bywz8ah5hjih90dhxr889sjax-libcxx-19.1.7
+  /nix/store/x44xvlpzc4n7rawg1amljq5yls2s9xmh-libiconv-1.17
+  /nix/store/c35qnqp2w3nzcz14xhz9fvrs8xlghv97-libiconv-109
+  /nix/store/ydjfhfg0l7facjfw63gkg1dc7za114cp-libidn2-2.3.8
+  /nix/store/2rm1yaikqiswncwmwxsxsk0sy4z54sv2-libpsl-0.21.5
+  /nix/store/0y63l7lwd4qss3rr6gwrl1yk4j3qyz12-libresolv-83
+  /nix/store/khw3s5c99j7dr2z7f0cwb5aas76fdmxj-libssh2-1.11.1
+  /nix/store/ic5j5v2cxlm8w96cdgavwl201l2lphgj-libunistring-1.3
+  /nix/store/a0smgj842sdhpfd620spvh4370c2k3yl-lndir-1.0.5
+  /nix/store/8ildh7dxcparzqnpd4jgjvafvxrap5fs-locale-118
+  /nix/store/8pkygh418z6hgsz1n4yawhhsycxv6n51-ncurses-6.5
+  /nix/store/hazh0mhhyfp58872hqq36rz31l20mizb-nghttp2-1.66.0-lib
+  /nix/store/2cf6iaamaldqlsm60lz78zrs1lwfy0zj-openssl-3.5.1
+  /nix/store/lia0hak1r4ksr6940d7ba4dbvhnhxhq2-patch-2.8
+  /nix/store/fh9061cvjry11i3nc5vcvamywczh3vng-pcre2-10.44
+  /nix/store/vwzmy11kx04g85m112azfsygq1wwzmci-publicsuffix-list-0-unstable-2025-07-22
+  /nix/store/ikkd2x00afn5qx6ns3b6l4ggaab8zjjy-samtools-1.22.1
+  /nix/store/9spbzhyrl9cyhsf3wigac2895gs71r7v-stdenv-darwin
+  /nix/store/c16j58zx67y16y4x80q8vb3p79g9hw42-xz-5.8.1
+  /nix/store/0f7n9zh00yly71ri3aiy19pp1sh133ax-xz-5.8.1-bin
+  /nix/store/2hdmc156f4xwndv96bviqrg70pp4m8ks-zlib-1.3.1
+  /nix/store/q208ahbq9fbhcnid4bcnzxdw9qv7jmcn-zstd-1.5.7
+copying path '/nix/store/qcy443gcdq9a5x7lqi2js0bsdmaks77y-bash-5.3p3' from 'https://cache.nixos.org'...
+copying path '/nix/store/a0smgj842sdhpfd620spvh4370c2k3yl-lndir-1.0.5' from 'https://cache.nixos.org'...
+copying path '/nix/store/jk41c12k87g2rjzvp8rd2wqyrjlpb9k8-gawk-5.3.2' from 'https://cache.nixos.org'...
+copying path '/nix/store/yps6adxhn723bfh2nzjiqj5v8kg6x56p-gnused-4.9' from 'https://cache.nixos.org'...
+copying path '/nix/store/8ildh7dxcparzqnpd4jgjvafvxrap5fs-locale-118' from 'https://cache.nixos.org'...
+copying path '/nix/store/8pkygh418z6hgsz1n4yawhhsycxv6n51-ncurses-6.5' from 'https://cache.nixos.org'...
+copying path '/nix/store/2hdmc156f4xwndv96bviqrg70pp4m8ks-zlib-1.3.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/rdfylzd9971jni8l9b262s5wkqw92yc9-bzip2-1.0.8' from 'https://cache.nixos.org'...
+copying path '/nix/store/c35qnqp2w3nzcz14xhz9fvrs8xlghv97-libiconv-109' from 'https://cache.nixos.org'...
+copying path '/nix/store/fh9061cvjry11i3nc5vcvamywczh3vng-pcre2-10.44' from 'https://cache.nixos.org'...
+copying path '/nix/store/c16j58zx67y16y4x80q8vb3p79g9hw42-xz-5.8.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/82mp1a3nqhhrs6vs31mx98wv9c946qbm-brotli-1.1.0-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/spcmsl4bywz8ah5hjih90dhxr889sjax-libcxx-19.1.7' from 'https://cache.nixos.org'...
+copying path '/nix/store/0y63l7lwd4qss3rr6gwrl1yk4j3qyz12-libresolv-83' from 'https://cache.nixos.org'...
+copying path '/nix/store/hazh0mhhyfp58872hqq36rz31l20mizb-nghttp2-1.66.0-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/2cf6iaamaldqlsm60lz78zrs1lwfy0zj-openssl-3.5.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/x44xvlpzc4n7rawg1amljq5yls2s9xmh-libiconv-1.17' from 'https://cache.nixos.org'...
+copying path '/nix/store/vwzmy11kx04g85m112azfsygq1wwzmci-publicsuffix-list-0-unstable-2025-07-22' from 'https://cache.nixos.org'...
+copying path '/nix/store/x7sym33nkfldh17vsxdrr1r2059p2xwv-bzip2-1.0.8-bin' from 'https://cache.nixos.org'...
+copying path '/nix/store/y357ras1saj1napr3lcbr8bv2l6284p1-file-5.45' from 'https://cache.nixos.org'...
+copying path '/nix/store/0f7n9zh00yly71ri3aiy19pp1sh133ax-xz-5.8.1-bin' from 'https://cache.nixos.org'...
+copying path '/nix/store/xffxkrlkr6ckv05ainx6684gxn8nba35-ed-1.21.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/js0k9pjw7hs7bcmpqk1z9ic7alng57pp-gnugrep-3.12' from 'https://cache.nixos.org'...
+copying path '/nix/store/vz9r3lpbaxwap29kixvns0md9cqsccm2-gzip-1.14' from 'https://cache.nixos.org'...
+copying path '/nix/store/0fi2mgxfcgk0bd5w6hzj10gmf4635x0l-gmp-with-cxx-6.3.0' from 'https://cache.nixos.org'...
+copying path '/nix/store/q208ahbq9fbhcnid4bcnzxdw9qv7jmcn-zstd-1.5.7' from 'https://cache.nixos.org'...
+copying path '/nix/store/ic5j5v2cxlm8w96cdgavwl201l2lphgj-libunistring-1.3' from 'https://cache.nixos.org'...
+copying path '/nix/store/lia0hak1r4ksr6940d7ba4dbvhnhxhq2-patch-2.8' from 'https://cache.nixos.org'...
+copying path '/nix/store/4419xj3qgn8ir8qigdk5vmbf2gfkfa8x-coreutils-9.7' from 'https://cache.nixos.org'...
+copying path '/nix/store/ydjfhfg0l7facjfw63gkg1dc7za114cp-libidn2-2.3.8' from 'https://cache.nixos.org'...
+copying path '/nix/store/flkk0nxbyv9f8j7rrh1lnzvcc1gvkyb0-krb5-1.21.3-lib' from 'https://cache.nixos.org'...
+copying path '/nix/store/khw3s5c99j7dr2z7f0cwb5aas76fdmxj-libssh2-1.11.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/m29vswnbdc8g1p2yqabk7gckf72jd6rh-gettext-0.25.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/qljc0pg7a1892rkyr067jkgnwklq7msx-diffutils-3.12' from 'https://cache.nixos.org'...
+copying path '/nix/store/dy362qhfnbwpmgl2640ais7c8l96m36j-findutils-4.10.0' from 'https://cache.nixos.org'...
+copying path '/nix/store/9skp0bwibcghf7ba5n5q6aqwgb161i9k-gnumake-4.4.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/zpdnx6afg2l6ax80kh1zardbcvdmx66f-gnutar-1.35' from 'https://cache.nixos.org'...
+copying path '/nix/store/2rm1yaikqiswncwmwxsxsk0sy4z54sv2-libpsl-0.21.5' from 'https://cache.nixos.org'...
+copying path '/nix/store/rg8k06q1h2rqr8i93a1pgi9jd4xk7zj2-curl-8.14.1' from 'https://cache.nixos.org'...
+copying path '/nix/store/9spbzhyrl9cyhsf3wigac2895gs71r7v-stdenv-darwin' from 'https://cache.nixos.org'...
+copying path '/nix/store/jppm7xp5aq6f2n8swbmny11mqfy70q4y-htslib-1.22' from 'https://cache.nixos.org'...
+copying path '/nix/store/ikkd2x00afn5qx6ns3b6l4ggaab8zjjy-samtools-1.22.1' from 'https://cache.nixos.org'...
+building '/nix/store/n3bz5qf0l7wgpd3mka0nyqi20mcrqrgr-samtools-wrapper-1.22.1.drv'...
+/nix/store/qhc850zvwx1agscn43ldph9mx7kzdni4-samtools-wrapper-1.22.1
+MacBookPro:~ wesley$ readlink -f resultnix path-info ./result
+/nix/store/qhc850zvwx1agscn43ldph9mx7kzdni4-samtools-wrapper-1.22.1
+MacBookPro:~ wesley$ mkdir -p bionix-examples/samtools
+MacBookPro:~ wesley$ mv samtools.nix bionix-examples/samtools/
+MacBookPro:~ wesley$ git add bionix-examples/samtools/samtools.nix
+fatal: not a git repository (or any of the parent directories): .git
+MacBookPro:~ wesley$ git commit -m
+fatal: not a git repository (or any of the parent directories): .git
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz bionix-examples/samtools/samtools.nix
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ nix path-info ./result
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz bionix-examples/samtools/samtools.nix
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ nix path-info ./result
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ # Show current store path (macOS-safe):
+MacBookPro:~ wesley$ nix path-info ./result
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ # Rebuild with the SAME pin and confirm the path is identical:
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz bionix-examples/samtools/samtools.nix
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ nix path-info ./result
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ # samtools wrapper (BioNix baseline)
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ Wraps nixpkgs `samtools` via `symlinkJoin` to demonstrate a minimal reproducible package.
+-bash: samtools: command not found
+-bash: symlinkJoin: command not found
+-bash: Wraps: command not found
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ ## Pin
+MacBookPro:~ wesley$ nixpkgs: `nixos-24.05`
+-bash: nixos-24.05: command not found
+-bash: nixpkgs:: command not found
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ ## Build
+MacBookPro:~ wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+error: path '/Users/wesley/samtools.nix' does not exist
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ ## Verify reproducibility
+MacBookPro:~ wesley$ Run the build twice with the same pin; the store path should be identical:
+-bash: Run: command not found
+-bash: the: command not found
+MacBookPro:~ wesley$ nix path-info ./result
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:~ wesley$ 
+MacBookPro:~ wesley$ ## Test
+MacBookPro:~ wesley$ ./result/bin/samtools --version
+samtools 1.19.2
+Using htslib 1.19.1
+Copyright (C) 2024 Genome Research Ltd.
+
+Samtools compilation details:
+    Features:       build=configure curses=yes 
+    CC:             clang
+    CPPFLAGS:       
+    CFLAGS:         -Wall -g -O2
+    LDFLAGS:        
+    HTSDIR:         
+    LIBS:           
+    CURSES_LIB:     -lncursesw
+
+HTSlib compilation details:
+    Features:       build=configure libcurl=yes S3=yes GCS=yes libdeflate=no lzma=yes bzip2=yes plugins=no htscodecs=1.6.0
+    CC:             clang
+    CPPFLAGS:       
+    CFLAGS:         -Wall -g -O2 -fvisibility=hidden
+    LDFLAGS:        -fvisibility=hidden 
+
+HTSlib URL scheme handlers present:
+    built-in:	 preload, data, file
+    S3 Multipart Upload:	 s3w, s3w+https, s3w+http
+    Amazon S3:	 s3+https, s3+http, s3
+    Google Cloud Storage:	 gs+http, gs+https, gs
+    libcurl:	 imaps, pop3, gophers, http, smb, gopher, sftp, ftps, imap, smtp, smtps, rtsp, scp, ftp, telnet, mqtt, https, smbs, tftp, pop3s, dict
+    crypt4gh-needed:	 crypt4gh
+    mem:	 mem
+MacBookPro:~ wesley$ cat > bionix-examples/samtools/README.md <<'MD'
+> # samtools wrapper (BioNix baseline)
+> 
+> Wraps nixpkgs `samtools` via `symlinkJoin` to demonstrate a minimal reproducible package.
+> 
+> ## Pin
+> nixpkgs: `nixos-24.05`
+> 
+> ## Build
+> nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+> 
+> ## Verify reproducibility
+> Run the build twice with the same pin; the store path should be identical:
+> nix path-info ./result
+> 
+> ## Test
+> ./result/bin/samtools --version
+> MD
+MacBookPro:~ wesley$ cat > bionix-examples/samtools/README.md <<'MD'
+> # samtools wrapper (BioNix baseline)
+> 
+> Wraps nixpkgs `samtools` via `symlinkJoin` to demonstrate a minimal reproducible package.
+> 
+> ## Pin
+> nixpkgs: `nixos-24.05`
+> 
+> ## Build
+> nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+> 
+> ## Verify reproducibility
+> Run the build twice with the same pin; the store path should be identical:
+> nix path-info ./result
+> 
+> ## Test
+> ./result/bin/samtools --version
+> MD
+MacBookPro:~ wesley$ cd bionix-examples/samtools
+MacBookPro:samtools wesley$ nix-build -I nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-24.05.tar.gz samtools.nix
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:samtools wesley$ nix path-info ./result
+/nix/store/49l8pmniwmymvnzhkri1ignxyriqj0xp-samtools-wrapper-1.19.2
+MacBookPro:samtools wesley$ ./result/bin/samtools --version
+samtools 1.19.2
+Using htslib 1.19.1
+Copyright (C) 2024 Genome Research Ltd.
+
+Samtools compilation details:
+    Features:       build=configure curses=yes 
+    CC:             clang
+    CPPFLAGS:       
+    CFLAGS:         -Wall -g -O2
+    LDFLAGS:        
+    HTSDIR:         
+    LIBS:           
+    CURSES_LIB:     -lncursesw
+
+HTSlib compilation details:
+    Features:       build=configure libcurl=yes S3=yes GCS=yes libdeflate=no lzma=yes bzip2=yes plugins=no htscodecs=1.6.0
+    CC:             clang
+    CPPFLAGS:       
+    CFLAGS:         -Wall -g -O2 -fvisibility=hidden
+    LDFLAGS:        -fvisibility=hidden 
+
+HTSlib URL scheme handlers present:
+    built-in:	 preload, data, file
+    S3 Multipart Upload:	 s3w, s3w+https, s3w+http
+    Amazon S3:	 s3+https, s3+http, s3
+    Google Cloud Storage:	 gs+http, gs+https, gs
+    libcurl:	 imaps, pop3, gophers, http, smb, gopher, sftp, ftps, imap, smtp, smtps, rtsp, scp, ftp, telnet, mqtt, https, smbs, tftp, pop3s, dict
+    crypt4gh-needed:	 crypt4gh
+    mem:	 mem
+MacBookPro:samtools wesley$ git add bionix-examples/samtools/samtools.nix bionix-examples/samtools/README.md
+fatal: not a git repository (or any of the parent directories): .git
+MacBookPro:samtools wesley$ git commit -m "Add samtools wrapper (pinned nixpkgs nixos-24.05) + README"
+fatal: not a git repository (or any of the parent directories): .git
+MacBookPro:samtools wesley$ cd ~
+MacBookPro:~ wesley$ git init -b main
+Initialized empty Git repository in /Users/wesley/.git/
+MacBookPro:~ wesley$ printf "result\n.nix-gcRoots\n*.drv\n" > .gitignore
+MacBookPro:~ wesley$ git add bionix-examples/samtools/samtools.nix bionix-examples/samtools/README.md .gitignore
+MacBookPro:~ wesley$ git commit -m "Add samtools wrapper (pinned nixpkgs nixos-24.05) + README"
+Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'wesley@MacBookPro.(none)')
+MacBookPro:~ wesley$ git config --global user.name "Wesley Li"
+MacBookPro:~ wesley$ git config --global user.email "your_unimelb_email@student.unimelb.edu.au"
+MacBookPro:~ wesley$ git config --list
+credential.helper=osxkeychain
+init.defaultbranch=main
+user.name=Wesley Li
+user.email=your_unimelb_email@student.unimelb.edu.au
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+MacBookPro:~ wesley$ git commit -m "Add samtools wrapper (pinned nixpkgs nixos-24.05) + README"
+[main (root-commit) 33291ad] Add samtools wrapper (pinned nixpkgs nixos-24.05) + README
+ 3 files changed, 25 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 bionix-examples/samtools/README.md
+ create mode 100644 bionix-examples/samtools/samtools.nix
+MacBookPro:~ wesley$ cd ~
+MacBookPro:~ wesley$ mv bionix-examples ~/bionix
+MacBookPro:~ wesley$ cd ~/bionix
+MacBookPro:bionix wesley$ git init -b main
+warning: re-init: ignored --initial-branch=main
+Reinitialized existing Git repository in /Users/wesley/bionix/.git/
+MacBookPro:bionix wesley$ mv ../.gitignore .  # reuse your ignore file
+MacBookPro:bionix wesley$ git add .
+MacBookPro:bionix wesley$ git commit -m "Initial commit: samtools wrapper with README"
+[master 98301ab] Initial commit: samtools wrapper with README
+ 3 files changed, 24 insertions(+), 2 deletions(-)
+ create mode 100644 bionix-examples/samtools/README.md
+ create mode 100644 bionix-examples/samtools/samtools.nix
+MacBookPro:bionix wesley$ git add .
+MacBookPro:bionix wesley$ git commit -m "Update diary with reproducibility logs"  
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+MacBookPro:bionix wesley$ git remote add origin git@github.com:yourusername/bionix.git
+error: remote origin already exists.
+MacBookPro:bionix wesley$ git push -u origin main
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/PapenfussLab/bionix.git'
+MacBookPro:bionix wesley$ # 1) Be in your project repo (not your home dir)
+MacBookPro:bionix wesley$ cd ~/bionix  # or wherever your project folder is
+MacBookPro:bionix wesley$ 
+MacBookPro:bionix wesley$ # 2) Initialise (if not already), name branch main
+MacBookPro:bionix wesley$ git init -b main
+warning: re-init: ignored --initial-branch=main
+Reinitialized existing Git repository in /Users/wesley/bionix/.git/
+MacBookPro:bionix wesley$ 
+MacBookPro:bionix wesley$ # 3) Add files and make an initial commit (required)
+MacBookPro:bionix wesley$ git add .
+MacBookPro:bionix wesley$ git commit -m "Initial commit: samtools wrapper + README"
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+MacBookPro:bionix wesley$ 
+MacBookPro:bionix wesley$ # 4) Create your own empty GitHub repo in the browser, e.g.:
+MacBookPro:bionix wesley$ # https://github.com/<your-username>/bionix
+MacBookPro:bionix wesley$ # Then set origin to YOUR repo URL (not PapenfussLab)
+MacBookPro:bionix wesley$ git remote remove origin 2>/dev/null || true
+MacBookPro:bionix wesley$ git remote add origin https://github.com/<your-username>/bionix.git
+-bash: your-username: No such file or directory
+MacBookPro:bionix wesley$ 
+MacBookPro:bionix wesley$ # 5) Push
+MacBookPro:bionix wesley$ git push -u origin main
+error: src refspec main does not match any
+error: failed to push some refs to 'origin'
+MacBookPro:bionix wesley$ 
